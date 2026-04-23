@@ -17,3 +17,13 @@ Route::get('/seed-db', function () {
     return 'Database seeded successfully';
 });
 
+Route::get('/create-admin', function () {
+    // create new admin in db
+    $user = new App\Models\User;
+    $user->name = 'Admin';
+    $user->email = 'admin@sahariancamp.com';
+    $user->password = bcrypt('Sahariancamp@123');
+    $user->save();
+    return 'User created successfully';
+});
+
