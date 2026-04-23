@@ -10,10 +10,7 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activities = Activity::where('is_active', true)->get()->map(function ($activity) {
-            $activity->image_url = $activity->image ? asset('storage/' . $activity->image) : null;
-            return $activity;
-        });
+        $activities = Activity::with('file')->where('is_active', true)->get();
 
         return response()->json($activities);
     }

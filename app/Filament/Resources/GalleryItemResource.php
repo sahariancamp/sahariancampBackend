@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\GalleryItemResource\Pages;
-use App\Filament\Resources\GalleryItemResource\RelationManagers;
 use App\Models\GalleryItem;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GalleryItemResource extends Resource
 {
@@ -31,10 +28,19 @@ class GalleryItemResource extends Resource
                         'Camp Life' => 'Camp Life',
                     ])
                     ->required(),
-                Forms\Components\FileUpload::make('image_path')
+                Forms\Components\FileUpload::make('image_temp')
+                    ->label('Image')
                     ->image()
+                    ->disk('failover')
                     ->directory('gallery')
-                    ->required(),
+                    ->visibility('public')
+                    ->required(fn ($record) => !$record?->file_id)
+                    ->dehydrated(true)
+                    ->afterStateHydrated(function (Forms\Components\FileUpload $component, $record) {
+                        if ($record?->file) {
+                            $component->state([$record->file->path]);
+                        }
+                    }),
                 Forms\Components\TextInput::make('sort_order')
                     ->numeric()
                     ->default(0),
@@ -45,14 +51,14 @@ class GalleryItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image_path'),
+                Tables\Columns\ImageColumn::make('file.path')
+                    ->disk('failover')
+                    ->label('Image'),
                 Tables\Columns\TextColumn::make('title')->searchable(),
                 Tables\Columns\TextColumn::make('category')->sortable(),
                 Tables\Columns\TextColumn::make('sort_order')->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -65,9 +71,7 @@ class GalleryItemResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -20,5 +20,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Support\Facades\Schema::defaultStringLength(191);
+
+        \Illuminate\Support\Facades\Storage::extend('failover', function ($app, $config) {
+            $manager = $app['filesystem'];
+            $primary = $manager->disk($config['primary']);
+            $fallback = $manager->disk($config['fallback']);
+
+            return new \App\Extensions\FailoverFilesystem($primary, $fallback);
+        });
     }
 }

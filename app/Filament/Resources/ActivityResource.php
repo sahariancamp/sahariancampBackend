@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActivityResource\Pages;
-use App\Filament\Resources\ActivityResource\RelationManagers;
 use App\Models\Activity;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ActivityResource extends Resource
 {
@@ -44,9 +41,18 @@ class ActivityResource extends Resource
                             ->required(),
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('image')
+                        Forms\Components\FileUpload::make('image_temp')
+                            ->label('Image')
                             ->image()
-                            ->directory('activities'),
+                            ->disk('failover')
+                            ->directory('activities')
+                            ->visibility('public')
+                            ->dehydrated(true)
+                            ->afterStateHydrated(function (Forms\Components\FileUpload $component, $record) {
+                                if ($record?->file) {
+                                    $component->state([$record->file->path]);
+                                }
+                            }),
                         Forms\Components\Toggle::make('is_active')
                             ->default(true),
                     ])->columns(2)
@@ -57,7 +63,9 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
+                Tables\Columns\ImageColumn::make('file.path')
+                    ->disk('failover')
+                    ->label('Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -69,9 +77,7 @@ class ActivityResource extends Resource
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -84,9 +90,7 @@ class ActivityResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

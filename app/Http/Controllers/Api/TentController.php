@@ -10,8 +10,7 @@ class TentController extends Controller
 {
     public function index()
     {
-        $tents = Tent::where('is_active', true)->get()->map(function ($tent) {
-            $tent->image_url = $tent->image ? asset('storage/' . $tent->image) : null;
+        $tents = Tent::with('file')->where('is_active', true)->get()->map(function ($tent) {
             $tent->features = json_decode($tent->features);
             return $tent;
         });

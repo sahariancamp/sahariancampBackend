@@ -3,15 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryItem extends Model
 {
-    protected $fillable = ['title', 'category', 'image_path', 'sort_order'];
+    protected $guarded = [];
 
     protected $appends = ['image_url'];
 
+    protected static function booted()
+    {
+        static::deleting(function ($item) {
+            $item->file?->delete();
+        });
+    }
+
+    public function file()
+    {
+        return $this->belongsTo(File::class);
+    }
+
     public function getImageUrlAttribute()
     {
-        return $this->image_path ? asset('storage/' . $this->image_path) : null;
+        return $this->file?->url;
     }
 }

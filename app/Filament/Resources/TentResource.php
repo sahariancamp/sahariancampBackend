@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TentResource\Pages;
-use App\Filament\Resources\TentResource\RelationManagers;
 use App\Models\Tent;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TentResource extends Resource
 {
@@ -54,9 +51,18 @@ class TentResource extends Resource
                             ->required(),
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('image')
+                        Forms\Components\FileUpload::make('image_temp')
+                            ->label('Image')
                             ->image()
-                            ->directory('tents'),
+                            ->disk('failover') // Use the smart failover disk
+                            ->directory('tents')
+                            ->visibility('public')
+                            ->dehydrated(true)
+                            ->afterStateHydrated(function (Forms\Components\FileUpload $component, $record) {
+                                if ($record?->file) {
+                                    $component->state([$record->file->path]);
+                                }
+                            }),
                         Forms\Components\Toggle::make('is_active')
                             ->default(true),
                     ])->columns(2)
@@ -67,7 +73,9 @@ class TentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
+                Tables\Columns\ImageColumn::make('file.path')
+                    ->disk('failover') // Display from the smart disk
+                    ->label('Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -102,9 +110,7 @@ class TentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
