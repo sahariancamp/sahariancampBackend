@@ -10,10 +10,7 @@ class TentController extends Controller
 {
     public function index()
     {
-        $tents = Tent::with('file')->where('is_active', true)->get()->map(function ($tent) {
-            $tent->features = json_decode($tent->features);
-            return $tent;
-        });
+        $tents = Tent::with('file')->where('is_active', true)->get();
 
         return response()->json($tents);
     }

@@ -17,13 +17,16 @@ Route::get('/seed-db', function () {
     return 'Database seeded successfully';
 });
 
-Route::get('/create-admin', function () {
-    // create new admin in db
-    $user = new App\Models\User;
-    $user->name = 'Admin';
-    $user->email = 'admin@sahariancamp.com';
-    $user->password = bcrypt('Sahariancamp@123');
-    $user->save();
-    return 'User created successfully';
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link', ['--force' => true]);
+    return 'Storage link created successfully';
 });
+
+Route::get('queue-work', function () {
+    Artisan::call('queue:work', ['--force' => true]);
+    return 'Queue work started successfully';
+});
+
+
+
 

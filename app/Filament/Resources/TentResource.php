@@ -15,6 +15,7 @@ class TentResource extends Resource
     protected static ?string $model = Tent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -42,14 +43,23 @@ class TentResource extends Resource
                             ->default('luxury')
                             ->required(),
                         Forms\Components\TextInput::make('price_per_night')
+                            ->label('Regular Price ($)')
                             ->numeric()
                             ->prefix('$')
                             ->required(),
+                        Forms\Components\TextInput::make('agency_price')
+                            ->label('Agency Price ($)')
+                            ->numeric()
+                            ->prefix('$'),
                         Forms\Components\TextInput::make('capacity')
                             ->numeric()
                             ->default(2)
                             ->required(),
                         Forms\Components\Textarea::make('description')
+                            ->columnSpanFull(),
+                        Forms\Components\TagsInput::make('features')
+                            ->placeholder('Add a feature (e.g. AC, Wifi)')
+                            ->required()
                             ->columnSpanFull(),
                         Forms\Components\FileUpload::make('image_temp')
                             ->label('Image')
@@ -83,6 +93,11 @@ class TentResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
                 Tables\Columns\TextColumn::make('price_per_night')
+                            ->label('Regular Price')
+                    ->money('USD')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('agency_price')
+                            ->label('Agency Price')
                     ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('capacity')

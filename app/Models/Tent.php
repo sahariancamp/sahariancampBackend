@@ -9,6 +9,10 @@ class Tent extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'features' => 'array',
+    ];
+
     protected $appends = ['image_url'];
 
     protected static function booted()
