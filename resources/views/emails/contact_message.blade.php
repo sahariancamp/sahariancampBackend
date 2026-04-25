@@ -21,7 +21,7 @@
             </tr>
         </table>
         <div class="content">
-            <p>Hello Admin,</p>
+            <p>Hello {{ \App\Models\User::first()->name ?? 'Admin' }},</p>
             <p>You have received a new message from the contact form on the website.</p>
             
             <div class="info-box">

@@ -23,7 +23,7 @@
             </tr>
         </table>
         <div class="content">
-            <p>Hello Admin,</p>
+            <p>Hello {{ \App\Models\User::first()->name ?? 'Admin' }},</p>
             <p>A new booking request has just been submitted on the website.</p>
             
             <h3 style="margin-top: 30px;">Selected Tents:</h3>
