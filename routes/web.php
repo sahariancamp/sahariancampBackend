@@ -35,5 +35,14 @@ Route::get('queue-work', function () {
 });
 
 
+Route::get('/test-queue', function () {
+    dispatch(function () {
+        \Log::info('✅ Queue is working perfectly at ' . now());
+    });
+    
+    return 'تم إرسال المهمة، تحقق من ملف الـ log';
+});
+
+
 
 
