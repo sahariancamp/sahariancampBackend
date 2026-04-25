@@ -17,6 +17,13 @@ Route::get('/seed-db', function () {
     return 'Database seeded successfully';
 });
 
+Route::get('/seed-one', function (Request $request) {
+    $seeder = $request->input('seeder');
+    Artisan::call('db:seed --class=' . $seeder . ' --force');
+    return $seeder . ' seeded successfully';
+}); 
+
+
 Route::get('/storage-link', function () {
     Artisan::call('storage:link', ['--force' => true]);
     return 'Storage link created successfully';
