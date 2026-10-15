@@ -15,8 +15,8 @@
     <div class="container">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" >
             <tr>
-                <td align="center" style="padding: 20px;">
-                    <img src="https://app.sahariancamp.com/images/logo.png" alt="Saharian Luxury Camp" style="max-width: 200px; height: auto; display: block;">
+                <td align="center" bgcolor="#0F0F1E" style="padding: 20px; background-color: #0F0F1E; border-radius: 5px;">
+                    <img src="https://sahariancamp.com/images/logo.png" alt="Saharian Luxury Camp" style="max-width: 200px; height: auto; display: block;">
                 </td>
             </tr>
         </table>
